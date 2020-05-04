@@ -1,4 +1,4 @@
-# challengesanadtech
+# challenge
 
 Setup: First you should add your GOOGLE API KEY inside Manifest.xml and All Pages
 
