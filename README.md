@@ -1,6 +1,6 @@
 # challenge
 
-Setup: First you should add your GOOGLE API KEY inside Manifest.xml and All Pages
+setup: add your GOOGLE API KEY inside Manifest.xml and All Pages
 
 Challenge: Develop a Mobile - App for Android that supports creating (CRUD) one or many geofences (polygons) and place/remove geo markers on the same Map. The app should prevent and warn the end-user if two or more polygons are overlapping or if he's trying to add a marker outside the defined polygons. If the App is closed and reopened the end-user should find all the polygons and markers previously defined before the app was closed.
 
