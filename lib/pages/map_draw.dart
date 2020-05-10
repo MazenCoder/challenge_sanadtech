@@ -5,9 +5,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import '../core/injection/injection_container.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter/material.dart';
 import '../core/model/point_model.dart';
-import '../core/util/image_helper.dart';
+import 'package:flutter/material.dart';
 import '../core/mobx/mobx_point.dart';
 import '../core/util/app_utils.dart';
 import 'dart:typed_data';
@@ -19,7 +18,7 @@ class MapDraw extends StatelessWidget {
   final Uint8List uint8list;
   MapDraw(this.uint8list);
 
-  static String kGoogleApiKey = "----------------------------------------";
+  static String kGoogleApiKey = "AIzaSyA2v62ZDMh39bY5Wg1FYxOLE4LNeDJCOHU";
   final GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
   final Completer<GoogleMapController> _controller = Completer();
   final GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
@@ -27,7 +26,10 @@ class MapDraw extends StatelessWidget {
   GoogleMapController _mapController;
   final Mode _mode = Mode.overlay;
   MobxPoint _mobx = MobxPoint();
+  bool _isUpdate = false;
+  String _idMarker = '';
   double _zoom = 14.0;
+
 
   CameraPosition _initialCamera() => CameraPosition(
     target: LatLng(35.586805, -5.361377), zoom: _zoom,
@@ -66,10 +68,7 @@ class MapDraw extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ],
-    )).whenComplete(() {
-      String id = sl<AppUtils>().CreateCryptoRandomString();
-      _mobx.polyline.addAll(getPolyline(id));
-    });
+    ));
   }
 
   @override
@@ -93,33 +92,59 @@ class MapDraw extends StatelessWidget {
                   onCameraMove:(CameraPosition cameraPosition) {
                     _zoom = cameraPosition.zoom;
                   },
-                  onTap: (location) {
+                  onTap: (location) async {
+                    /// Draw polygons
+                    /// await sl<AppUtils>().checkLine(location, _mobx.pointModel)
+                    if (!_mobx.isSelected) {
+                      final point = PointModel(
+                        id: sl<AppUtils>().CreateCryptoRandomString(),
+                        info: 'DOMICILE',
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                      );
+                      if (_mobx.pointModel.isEmpty || _mobx.pointModel.length < 3) {
+                        _mobx.pointModel.add(point);
+                        _addMarker(context, point, uint8list);
+                        _mobx.setPosition(location);
+                      } else {
+                        _mobx.pointModel.add(point);
+                        _addMarker(context, point, uint8list);
+                        _mobx.setPosition(location);
+                      }
 
-                    //print(sl<AppUtils>().checkPoint(location));
-                    //print('.................................');
-                    //print('${location.latitude}:${location.longitude}');
+                      if (_mobx.markers.length > 1) {
+                        String id = sl<AppUtils>().CreateCryptoRandomString();
+                        _mobx.polyline.addAll(getPolyline(id));
+                      }
+                      ///_mobx.latLngs.add(location);
 
-                    final point = PointModel(
-                      id: sl<AppUtils>().CreateCryptoRandomString(),
-                      info: 'DOMICILE',
-                      latitude: location.latitude,
-                      longitude: location.longitude,
-                    );
-                    _mobx.pointModel.add(point);
-                    _addMarker(context, point, uint8list);
-                    _mobx.setPosition(location);
+                      _mapController.animateCamera(CameraUpdate.newCameraPosition(
+                        CameraPosition(
+                          target: LatLng(_mobx.latitude, _mobx.longitude),
+                          zoom: _zoom,
+                        ),
+                      ),).catchError((e) => showSnackBar(e.toString()));
 
-                    ///_mobx.latLngs.add(location);
+                    } else {
+                      if (sl<AppUtils>().checkPointOverlapping(location, _mobx.pointModel)) {
 
-                    _mapController.animateCamera(CameraUpdate.newCameraPosition(
-                      CameraPosition(
-                        target: LatLng(_mobx.latitude, _mobx.longitude),
-                        zoom: _zoom,
-                      ),
-                    ),).catchError((e) => showSnackBar(e.toString()));
+                        final point = PointModel(
+                          id: sl<AppUtils>().CreateCryptoRandomString(),
+                          info: 'DOMICILE',
+                          latitude: location.latitude,
+                          longitude: location.longitude,
+                        );
+                        _mobx.pointModel.add(point);
+                        _addMarker(context, point, uint8list);
+                        _mobx.setPosition(location);
+                      } else {
+                        _warningDialog(context);
+                      }
+                    }
                   },
                   markers: _mobx.markers.toSet(),
                   polylines: _mobx.polyline != null ? _mobx.polyline.toSet() : null,
+                  polygons: _mobx.polygon != null ? _mobx.polygon.toSet() : null,
                 ),
               ),
               Align(
@@ -147,6 +172,7 @@ class MapDraw extends StatelessWidget {
                         _mobx.pointModel.clear();
                         _mobx.markers.clear();
                         _mobx.latLngs.clear();
+                        _mobx.polygon.clear();
                       }
                   ),
                 ),
@@ -155,15 +181,36 @@ class MapDraw extends StatelessWidget {
                 alignment: Alignment.bottomCenter,
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 10),
-                  child: FloatingActionButton(
-                    elevation: 2,
-                    backgroundColor: Colors.pink,
-                    child: Icon(MdiIcons.fromString('map-marker-path')),
-                    heroTag: null,
-                    onPressed: () {
-                      String id = sl<AppUtils>().CreateCryptoRandomString();
-                      _mobx.polyline.addAll(getPolyline(id));
-                    },
+                  child: Observer(
+                    builder: (_) => FloatingActionButton(
+                      elevation: 2,
+                      backgroundColor: !_mobx.isSelected ? Colors.pink : Colors.grey,
+                      child: !_mobx.isSelected ?
+                      Icon(MdiIcons.fromString('map-marker-distance')) :
+                      Icon(Icons.linear_scale),
+                      heroTag: null,
+                      onPressed: !_mobx.isSelected ? () {
+                        _mobx.onSelect(true);
+                        final first = _mobx.pointModel.first;
+
+                        final point1 = PointModel(
+                          id: sl<AppUtils>().CreateCryptoRandomString(),
+                          info: 'DOMICILE',
+                          latitude: first.latitude,
+                          longitude: first.longitude,
+                        );
+                        _mobx.pointModel.add(point1);
+
+                        String id = sl<AppUtils>().CreateCryptoRandomString();
+                        _mobx.polyline.addAll(getPolyline(id));
+                        _mobx.markers.clear();
+                        drawPolygon();
+                        _mobx.polyline.clear();
+                        //_mobx.pointModel.clear();
+                        _mobx.markers.clear();
+                        _mobx.latLngs.clear();
+                      } : null,
+                    ),
                   ),
                 ),
               ),
@@ -218,7 +265,8 @@ class MapDraw extends StatelessWidget {
       markerId: MarkerId(pointModel.id),
       infoWindow: InfoWindow(title: pointModel.info),
       onTap: () async {
-        await _deleteDialog(context, pointModel.id, pointModel.id);
+        await _optionDialog(context, pointModel.id, pointModel.id, pointModel.info);
+        //await _deleteDialog(context, pointModel.id, pointModel.id);
       },
       position: LatLng(pointModel.latitude, pointModel.longitude),
       //icon: BitmapDescriptor.fromBytes(icon),
@@ -251,6 +299,105 @@ class MapDraw extends StatelessWidget {
       print("error, $e");
       return _polyline;
     }
+  }
+
+  void drawPolygon() {
+    List<LatLng> points = [];
+
+    for (PointModel point in _mobx.pointModel) {
+      points.add(LatLng(point.latitude, point.longitude));
+    }
+
+    String id = sl<AppUtils>().CreateCryptoRandomString();
+    _mobx.polygon.add(Polygon(
+      polygonId: PolygonId(id),
+      strokeColor: Colors.pink[100],
+      fillColor: Colors.pink[100],
+      onTap: () {
+        print(id);
+      },
+      points: points,
+    ));
+  }
+
+  _optionDialog(BuildContext context, String markerId, String pointId, String text) async {
+    await showDialog(context: context, builder: (context) => AlertDialog(
+      title: Text('Address is: $text'),
+      actions: <Widget>[
+        FlatButton(
+          child: Text('Delete this point'),
+          onPressed: () {
+            try {
+              _mobx.markers.removeWhere((item) => item.markerId.value == markerId);
+              _mobx.pointModel.removeWhere((item) => item.id == markerId);
+              //_mobx.pointModel.removeAt(pointIndex);
+              Navigator.pop(context);
+            } catch(e) {
+              Navigator.pop(context);
+              print('error, $e');
+            }
+          },
+        ),
+
+        FlatButton(
+            child: Text('Updage this point'),
+            onPressed: () {
+              final marker = _mobx.markers.toList().firstWhere((item) => item.markerId.value == markerId);
+              updateMarker(marker);
+              Navigator.pop(context);
+            }
+        ),
+
+        FlatButton(
+          child: Text('Cancel'),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
+    )).whenComplete(() {
+      _removeMarker();
+    });
+  }
+
+  _warningDialog(BuildContext context) async {
+    await showDialog(context: context, builder: (context) => AlertDialog(
+      title: Text('Oops! this point outside polygons'),
+      actions: <Widget>[
+        FlatButton(
+          child: Text('Try again'),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
+    ));
+  }
+
+  updateMarker(var marker) {
+
+    var position = marker.position;
+    var infoWindow = marker.infoWindow;
+    var markerId = marker.markerId;
+    _idMarker = marker.markerId.value;
+
+    _mobx.markers.removeWhere((item) => item.markerId.value == _idMarker);
+
+    Marker _marker = Marker(
+      markerId: markerId,
+      onTap: () {
+        print("tapped");
+      },
+      position: position,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+      infoWindow: infoWindow,
+    );
+
+    _mobx.markers.add(_marker);
+    _isUpdate = true;
+  }
+
+  _removeMarker() async {
+    await Future.delayed(Duration(seconds: 1)).then((value) => {
+    _mobx.removePoint(_idMarker)
+      //_mobx.markers.removeWhere((item) => item.markerId.value == _idMarker)
+    });
   }
 }
 

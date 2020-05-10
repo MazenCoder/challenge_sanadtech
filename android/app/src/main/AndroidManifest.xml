@@ -10,14 +10,27 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <permission
+        android:name="android.permission.FORCE_STOP_PACKAGES"
+        android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
+        android:protectionLevel="signature"
+        android:sharedUserId="android.uid.system" />
+    <permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL"
+        android:protectionLevel="signature"/>
+
 
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="Challenge SanadTech"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="true"
+        android:supportsRtl="true"
+        android:installLocation="auto"
+        android:usesCleartextTraffic="true">
 
+        <!-- AIzaSyA2v62ZDMh39bY5Wg1FYxOLE4LNeDJCOHU -->
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="----------------------------------------"/>
+            android:value="AIzaSyDolo1Le0868irzhrgQ6B4xqW7IzaV3x08"/>
 
         <activity
             android:name=".MainActivity"
@@ -26,6 +39,7 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

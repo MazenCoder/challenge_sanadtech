@@ -111,6 +111,23 @@ mixin _$MobxPoint on MobxPointBase, Store {
     }, _$polygonAtom, name: '${_$polygonAtom.name}_set');
   }
 
+  final _$refreshAtom = Atom(name: 'MobxPointBase.refresh');
+
+  @override
+  bool get refresh {
+    _$refreshAtom.context.enforceReadPolicy(_$refreshAtom);
+    _$refreshAtom.reportObserved();
+    return super.refresh;
+  }
+
+  @override
+  set refresh(bool value) {
+    _$refreshAtom.context.conditionallyRunInAction(() {
+      super.refresh = value;
+      _$refreshAtom.reportChanged();
+    }, _$refreshAtom, name: '${_$refreshAtom.name}_set');
+  }
+
   final _$isSelectedAtom = Atom(name: 'MobxPointBase.isSelected');
 
   @override
@@ -126,6 +143,23 @@ mixin _$MobxPoint on MobxPointBase, Store {
       super.isSelected = value;
       _$isSelectedAtom.reportChanged();
     }, _$isSelectedAtom, name: '${_$isSelectedAtom.name}_set');
+  }
+
+  final _$isConnectedAtom = Atom(name: 'MobxPointBase.isConnected');
+
+  @override
+  bool get isConnected {
+    _$isConnectedAtom.context.enforceReadPolicy(_$isConnectedAtom);
+    _$isConnectedAtom.reportObserved();
+    return super.isConnected;
+  }
+
+  @override
+  set isConnected(bool value) {
+    _$isConnectedAtom.context.conditionallyRunInAction(() {
+      super.isConnected = value;
+      _$isConnectedAtom.reportChanged();
+    }, _$isConnectedAtom, name: '${_$isConnectedAtom.name}_set');
   }
 
   final _$latitudeAtom = Atom(name: 'MobxPointBase.latitude');
@@ -179,6 +213,74 @@ mixin _$MobxPoint on MobxPointBase, Store {
     }, _$id_secteurAtom, name: '${_$id_secteurAtom.name}_set');
   }
 
+  final _$configPolylineAtom = Atom(name: 'MobxPointBase.configPolyline');
+
+  @override
+  bool get configPolyline {
+    _$configPolylineAtom.context.enforceReadPolicy(_$configPolylineAtom);
+    _$configPolylineAtom.reportObserved();
+    return super.configPolyline;
+  }
+
+  @override
+  set configPolyline(bool value) {
+    _$configPolylineAtom.context.conditionallyRunInAction(() {
+      super.configPolyline = value;
+      _$configPolylineAtom.reportChanged();
+    }, _$configPolylineAtom, name: '${_$configPolylineAtom.name}_set');
+  }
+
+  final _$configPolygonAtom = Atom(name: 'MobxPointBase.configPolygon');
+
+  @override
+  bool get configPolygon {
+    _$configPolygonAtom.context.enforceReadPolicy(_$configPolygonAtom);
+    _$configPolygonAtom.reportObserved();
+    return super.configPolygon;
+  }
+
+  @override
+  set configPolygon(bool value) {
+    _$configPolygonAtom.context.conditionallyRunInAction(() {
+      super.configPolygon = value;
+      _$configPolygonAtom.reportChanged();
+    }, _$configPolygonAtom, name: '${_$configPolygonAtom.name}_set');
+  }
+
+  final _$configMarkersAtom = Atom(name: 'MobxPointBase.configMarkers');
+
+  @override
+  bool get configMarkers {
+    _$configMarkersAtom.context.enforceReadPolicy(_$configMarkersAtom);
+    _$configMarkersAtom.reportObserved();
+    return super.configMarkers;
+  }
+
+  @override
+  set configMarkers(bool value) {
+    _$configMarkersAtom.context.conditionallyRunInAction(() {
+      super.configMarkers = value;
+      _$configMarkersAtom.reportChanged();
+    }, _$configMarkersAtom, name: '${_$configMarkersAtom.name}_set');
+  }
+
+  final _$configZoomAtom = Atom(name: 'MobxPointBase.configZoom');
+
+  @override
+  double get configZoom {
+    _$configZoomAtom.context.enforceReadPolicy(_$configZoomAtom);
+    _$configZoomAtom.reportObserved();
+    return super.configZoom;
+  }
+
+  @override
+  set configZoom(double value) {
+    _$configZoomAtom.context.conditionallyRunInAction(() {
+      super.configZoom = value;
+      _$configZoomAtom.reportChanged();
+    }, _$configZoomAtom, name: '${_$configZoomAtom.name}_set');
+  }
+
   final _$MobxPointBaseActionController =
       ActionController(name: 'MobxPointBase');
 
@@ -213,9 +315,49 @@ mixin _$MobxPoint on MobxPointBase, Store {
   }
 
   @override
+  void onSelectPolyline(bool selected) {
+    final _$actionInfo = _$MobxPointBaseActionController.startAction();
+    try {
+      return super.onSelectPolyline(selected);
+    } finally {
+      _$MobxPointBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void onSelectRefresh(bool selected) {
+    final _$actionInfo = _$MobxPointBaseActionController.startAction();
+    try {
+      return super.onSelectRefresh(selected);
+    } finally {
+      _$MobxPointBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void onSelectPolygon(bool selected) {
+    final _$actionInfo = _$MobxPointBaseActionController.startAction();
+    try {
+      return super.onSelectPolygon(selected);
+    } finally {
+      _$MobxPointBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void config(dynamic config) {
+    final _$actionInfo = _$MobxPointBaseActionController.startAction();
+    try {
+      return super.config(config);
+    } finally {
+      _$MobxPointBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     final string =
-        'pointModel: ${pointModel.toString()},entitys: ${entitys.toString()},markers: ${markers.toString()},latLngs: ${latLngs.toString()},polyline: ${polyline.toString()},polygon: ${polygon.toString()},isSelected: ${isSelected.toString()},latitude: ${latitude.toString()},longitude: ${longitude.toString()},id_secteur: ${id_secteur.toString()}';
+        'pointModel: ${pointModel.toString()},entitys: ${entitys.toString()},markers: ${markers.toString()},latLngs: ${latLngs.toString()},polyline: ${polyline.toString()},polygon: ${polygon.toString()},refresh: ${refresh.toString()},isSelected: ${isSelected.toString()},isConnected: ${isConnected.toString()},latitude: ${latitude.toString()},longitude: ${longitude.toString()},id_secteur: ${id_secteur.toString()},configPolyline: ${configPolyline.toString()},configPolygon: ${configPolygon.toString()},configMarkers: ${configMarkers.toString()},configZoom: ${configZoom.toString()}';
     return '{$string}';
   }
 }

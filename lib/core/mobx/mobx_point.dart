@@ -28,7 +28,13 @@ abstract class MobxPointBase with Store {
   ObservableList<Polygon> polygon = ObservableList<Polygon>();
 
   @observable
+  bool refresh = false;
+
+  @observable
   bool isSelected = false;
+
+  @observable
+  bool isConnected = false;
 
   @observable
   double latitude = 35.586805;
@@ -39,6 +45,18 @@ abstract class MobxPointBase with Store {
   @observable
   String id_secteur = '';
 
+  //! config
+  @observable
+  bool configPolyline = true;
+
+  @observable
+  bool configPolygon = false;
+
+  @observable
+  bool configMarkers = false;
+
+  @observable
+  double configZoom = 14;
 
   @action
   void setPosition(LatLng position) {
@@ -61,4 +79,28 @@ abstract class MobxPointBase with Store {
 
   @action
   void onSelect(bool selected) => this.isSelected = selected;
+
+  @action
+  void onSelectPolyline(bool selected) => this.configPolyline = selected;
+
+  @action
+  void onSelectRefresh(bool selected) => this.refresh = selected;
+
+  @action
+  void onSelectPolygon(bool selected) => this.configPolygon = selected;
+
+  void removePoint(String _idMarker) {
+    markers.removeWhere((item) => item.markerId.value == _idMarker);
+    pointModel.removeWhere((item) => item.id == _idMarker);
+  }
+
+  @action
+  void config(EntityConfig config) {
+    if (config != null) {
+      this.configPolyline = config.polyline;
+      this.configPolygon = config.polygon;
+      this.configMarkers = config.markers;
+      this.configZoom = config.zoom;
+    }
+  }
 }

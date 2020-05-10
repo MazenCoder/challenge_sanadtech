@@ -1,9 +1,14 @@
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:challengesanadtech/core/injection/injection_container.dart';
+import 'package:challengesanadtech/core/notifier/app_notifier.dart';
+import 'package:challengesanadtech/core/notifier/app_state.dart';
+import 'package:challengesanadtech/pages/map_drawing_route.dart';
 import 'package:challengesanadtech/pages/map_overlapping.dart';
+import 'package:challengesanadtech/pages/draw_polygons.dart';
 import 'package:challengesanadtech/pages/map_offline.dart';
 import 'package:challengesanadtech/pages/map_draw.dart';
 import 'core/injection/injection_container.dart' as di;
+//import 'package:geolocator/geolocator.dart';
 import 'core/database/app_database.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +16,38 @@ import 'core/util/image_helper.dart';
 import 'core/util/app_utils.dart';
 import 'dart:typed_data';
 
+
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await di.setup();
+    runApp(
+      MultiProvider(providers: [
+        //ChangeNotifierProvider.value(value: AppState()),
+        ChangeNotifierProvider.value(value: AppNotifier()),
+      ],
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp2 extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+
+        primarySwatch: Colors.blue,
+      ),
+      home: MapDrawingRoute(null),
+    );
+  }
+}
+
+
+void main2() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.setup();
   runApp(MyApp());
@@ -40,7 +76,51 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+//  Location location = new Location();
+//
+//  bool _serviceEnabled;
+//  PermissionStatus _permissionGranted;
+//  LocationData _locationData;
+
+  @override
+  void initState() {
+    super.initState();
+//    _init();
+  }
+
+//  _init() async {
+//    await Future.delayed(Duration(seconds: 3)).then((value) => getPermissionStatus());
+//  }
+
+//  void getPermissionStatus() async {
+//    try {
+//      _serviceEnabled = await location.serviceEnabled();
+//      if (!_serviceEnabled) {
+//        _serviceEnabled = await location.requestService();
+//        if (!_serviceEnabled) {
+//          return;
+//        }
+//      }
+//
+//      _permissionGranted = await location.hasPermission();
+//      if (_permissionGranted == PermissionStatus.denied) {
+//        _permissionGranted = await location.requestPermission();
+//        if (_permissionGranted != PermissionStatus.granted) {
+//          return;
+//        }
+//      }
+//
+//      _locationData = await location.getLocation();
+//    } catch (e) {}
+//  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +141,7 @@ class HomePage extends StatelessWidget {
               return ListView(
                 padding: const EdgeInsets.all(6),
                 children: <Widget>[
+                  /*
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -74,6 +155,22 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
+
+                   */
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        onTap: () => Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => DrawPolygons(snapshot.data, null)
+                        )),
+                        title: Text("Draw Polygons"),
+                        leading: Icon(MdiIcons.fromString('map-marker-path')),
+                        subtitle: Text('you can creating (CRUD) one or many polylines and place/remove geo markers on the same Map\n - Select point to remove or update\n - online/offline'),
+                      ),
+                    ),
+                  ),
+                  /*
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -87,6 +184,8 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
+
+
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -100,12 +199,28 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
+
+                   */
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        onTap: () => Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => MapDrawingRoute(snapshot.data)
+                        )),
+                        title: Text("Draw route"),
+                        leading: Icon(MdiIcons.directions),
+                        subtitle: Text('you can draw route on google map between two locations\n - Select point to remove or update'),
+                      ),
+                    ),
+                  ),
                 ],
               );
           }
         },
-      )
+      ),
     );
   }
 }
+
 

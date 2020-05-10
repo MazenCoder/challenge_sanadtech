@@ -11,7 +11,7 @@ description: A new Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -24,20 +24,28 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   material_design_icons_flutter: ^4.0.5145
   data_connection_checker: ^0.3.4
-  flutter_flexible_toast: ^0.1.4
+  flutter_polyline_points: ^0.1.0
+#  flutter_flexible_toast: ^0.1.4
   flutter_google_places: ^0.2.5
   google_maps_flutter: ^0.5.27
+  google_map_polyutil: ^1.0.0
+  #google_maps_utils: ^1.2.0+3
+#  geodesy: ^0.3.2
   shared_preferences: 0.5.3+4
-  cupertino_icons: ^0.1.3
-  auto_size_text: ^2.1.0
-  moor_flutter: ^3.0.0
+#  cupertino_icons: ^0.1.3
+#  auto_size_text: ^2.1.0
+  moor_flutter: ^2.1.1
+#  location: ^3.0.2
   flutter_mobx: ^1.1.0
-  popup_menu: ^1.0.5
+#  popup_menu: ^1.0.5
   equatable: ^1.1.1
   get_it: ^4.0.2
   provider: ^4.0.5+1
   poly: ^1.0.7+2
   mobx: ^1.1.1
+  # TEST
+  google_map_polyline:
+  geolocator: ^5.3.1
 
 
 
@@ -45,7 +53,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: any
-  moor_generator: ^3.0.0
+  moor_generator: ^2.4.0
   mobx_codegen: ^1.0.3
   logger: ^0.9.1
 

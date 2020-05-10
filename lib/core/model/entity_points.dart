@@ -5,11 +5,16 @@ part 'entity_points.g.dart';
 
 class EntityPoints extends Table {
 
-  IntColumn get idEntityPoint => integer().autoIncrement()();
-  TextColumn get id => text().nullable()();
+  //IntColumn get idEntityPoint => integer().autoIncrement()();
+  TextColumn get id => text()();
   TextColumn get info => text().nullable()();
   RealColumn get latitude => real().nullable()();
   RealColumn get longitude => real().nullable()();
+  BoolColumn get inside => boolean().withDefault(const Constant(false)).nullable()();
+  BoolColumn get updatePoint => boolean().withDefault(const Constant(false)).nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
 
 }
 
@@ -25,6 +30,7 @@ class EntityPointsDao extends DatabaseAccessor<AppDatabase>
   Future insertEntityPoint(Insertable<EntityPoint> details) => into(entityPoints).insert(details);
   Future updateEntityPoint(Insertable<EntityPoint> details) => update(entityPoints).replace(details);
   Future deleteEntityPoint(Insertable<EntityPoint> details) => delete(entityPoints).delete(details);
+
 
 //  Future<List<Adresse>> getAsyncAdresses(bool async) {
 //    return (select(adresses)

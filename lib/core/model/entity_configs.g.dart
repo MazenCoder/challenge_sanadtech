@@ -1,11 +1,11 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'entity_points.dart';
+part of 'entity_configs.dart';
 
 // **************************************************************************
 // DaoGenerator
 // **************************************************************************
 
-mixin _$EntityPointsDaoMixin on DatabaseAccessor<AppDatabase> {
-  $EntityPointsTable get entityPoints => db.entityPoints;
+mixin _$EntityConfigsDaoMixin on DatabaseAccessor<AppDatabase> {
+  $EntityConfigsTable get entityConfigs => db.entityConfigs;
 }

@@ -20,7 +20,7 @@ class MapOffline extends StatelessWidget {
   final Uint8List uint8list;
   MapOffline(this.uint8list);
 
-  static String kGoogleApiKey = "----------------------------------------";
+  static String kGoogleApiKey = "AIzaSyA2v62ZDMh39bY5Wg1FYxOLE4LNeDJCOHU";
   final GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
   final Completer<GoogleMapController> _controller = Completer();
   final GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
